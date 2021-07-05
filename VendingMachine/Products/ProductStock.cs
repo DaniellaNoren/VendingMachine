@@ -13,23 +13,26 @@ namespace VendingMachine.Products
             set
             {
                 if (value < 0)
-                    throw new Exception();
+                    throw new ArgumentException("Amount can't be less than zero.");
 
                 amount = value;
             }
         }
 
-        public Product product;
+        public Product Product { get; set; }
 
         public ProductStock(int amount, Product product)
         {
-            this.amount = amount;
-            this.product = product;
+            this.Amount = amount;
+            this.Product = product;
         }
 
         public void ChangeAmount(int amount)
         {
-            this.amount += amount;
+            if (this.amount + amount < 0)
+                this.amount = 0;
+            else
+                this.amount += amount;
         }
 
         public Product GetProduct()
@@ -37,18 +40,10 @@ namespace VendingMachine.Products
             if (amount > 0)
             {
                 ChangeAmount(-1);
-                return product;
+                return Product;
             }
 
             throw new OutOfStockException("Product is out of stock.");
-        }
-    }
-
-    public class OutOfStockException : Exception
-    {
-        public OutOfStockException(string msg) : base(msg)
-        {
-
         }
     }
 }

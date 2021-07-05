@@ -40,7 +40,7 @@ namespace VendingMachine
             if (products[index].amount < 0)
                 throw new Exception();
 
-            Product pr = products[index].product;
+            Product pr = products[index].GetProduct();
 
             if (MoneyPool - pr.Price < 0)
                 throw new Exception();
