@@ -6,7 +6,7 @@ using VendingMachine.Products;
 
 namespace VendingMachine
 {
-    public class VendingMachine
+    public class VendingMachine : IVendingMachine
     {
         private static readonly int[] validAmounts = new int[] { 1, 5, 10, 20, 50, 100, 500, 1000 };
 
@@ -33,7 +33,27 @@ namespace VendingMachine
             this.products = products;
         }
 
-        public Product BuyProduct(int index)
+
+        public void AdjustCost(int price)
+        {
+            if (MoneyPool - price < 0)
+                throw new NotEnoughMoneyException("Not enough money to buy product.");
+
+            Cost += price;
+            
+        }
+
+        public static bool CheckValidAmount(int money)
+        {
+            if (Array.FindIndex(validAmounts, a => a == money) == -1)
+            {
+                throw new ArgumentException("Not a valid amount.");
+            }
+
+            return true;
+        }
+
+        public Product Purchase(int index)
         {
             if (index < 0 || index >= products.Length)
                 throw new IndexOutOfRangeException("Index out of range.");
@@ -55,26 +75,32 @@ namespace VendingMachine
 
         }
 
-        public void AdjustCost(int price)
+        public ProductStock[] ShowAll()
         {
-            if (MoneyPool - price < 0)
-                throw new NotEnoughMoneyException("Not enough money to buy product.");
-
-            Cost += price;
-            
+            return products;
         }
 
-        public static bool CheckValidAmount(int money)
+        public void InsertMoney(int money)
         {
-            if (Array.FindIndex(validAmounts, a => a == money) == -1)
+            MoneyPool += money;
+        }
+
+        public Dictionary<int, int> EndTransaction()
+        {
+            Dictionary<int, int> change = new Dictionary<int, int>();
+
+            int leftOverMoney = MoneyPool - Cost;
+
+            foreach (int value in validAmounts)
             {
-                throw new ArgumentException("Not a valid amount.");
+                if(leftOverMoney % value == value)
+                {
+                    change.Add(value, leftOverMoney / value);
+                    leftOverMoney /= value;
+                }
             }
-
-            return true;
+           
+            return change;
         }
-       
-
-
     }
 }

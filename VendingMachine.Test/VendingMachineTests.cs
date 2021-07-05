@@ -59,7 +59,7 @@ namespace VendingMachine.Test
         {
             VendingMachine vm = new VendingMachine(500, GetProducts());
 
-            Product pr = vm.BuyProduct(1);
+            Product pr = vm.Purchase(1);
             Assert.Equal(GetProducts()[1].Product.Examine(), pr.Examine());
         }  
         
@@ -68,7 +68,7 @@ namespace VendingMachine.Test
         {
             VendingMachine vm = new VendingMachine(500, GetProducts());
 
-            vm.BuyProduct(1);
+            vm.Purchase(1);
             Assert.Equal(GetProducts()[1].Product.Price, vm.Cost);
         }
 
@@ -78,7 +78,7 @@ namespace VendingMachine.Test
         public void BuyProduct_ShouldThrowIndexOutOfRangeException(int index)
         {
             VendingMachine vm = new VendingMachine(500, GetProducts());
-            Assert.Throws<IndexOutOfRangeException>(() => vm.BuyProduct(index));
+            Assert.Throws<IndexOutOfRangeException>(() => vm.Purchase(index));
         }   
 
         [Fact]
@@ -86,7 +86,7 @@ namespace VendingMachine.Test
         {
             VendingMachine vm = new VendingMachine(500, new ProductStock[] { new ProductStock(0, new Drink(5, "Coke", 50, "Description")) });
             
-            Assert.Throws<OutOfStockException>(() => vm.BuyProduct(0));
+            Assert.Throws<OutOfStockException>(() => vm.Purchase(0));
         }
 
    
