@@ -13,7 +13,7 @@ namespace VendingMachine.Products.Things
 
         public override string Use()
         {
-            throw new NotImplementedException();
+            return $"You use the {Description} {Name} and feel bad about it.";
         }
     }
 }

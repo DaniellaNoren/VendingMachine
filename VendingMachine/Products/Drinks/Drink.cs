@@ -13,7 +13,7 @@ namespace VendingMachine.Products
         
         public override string Use()
         {
-            throw new NotImplementedException();
+            return $"You drink the {Description} {Name} for {Calories} kcal and feel amazing.";
         }
     }
 }

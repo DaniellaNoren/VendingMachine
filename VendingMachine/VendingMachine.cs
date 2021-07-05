@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using VendingMachine.Exceptions;
 using VendingMachine.Products;
 
 namespace VendingMachine
@@ -34,45 +35,45 @@ namespace VendingMachine
 
         public Product BuyProduct(int index)
         {
-            if (index >= products.Length)
-                throw new Exception();
+            if (index < 0 || index >= products.Length)
+                throw new IndexOutOfRangeException("Index out of range.");
 
-            if (products[index].amount < 0)
-                throw new Exception();
+            Product pr;
 
-            Product pr = products[index].GetProduct();
+            try
+            {
+                pr = products[index].GetProduct();
+            }
+            catch
+            {
+                throw;
+            }
 
-            if (MoneyPool - pr.Price < 0)
-                throw new Exception();
-
-            Cost += pr.Price;
-            MoneyPool -= pr.Price;
+            AdjustCost(pr.Price);
 
             return pr;
 
         }
 
-        public bool CheckValidAmount(int money)
+        public void AdjustCost(int price)
+        {
+            if (MoneyPool - price < 0)
+                throw new NotEnoughMoneyException("Not enough money to buy product.");
+
+            Cost += price;
+            
+        }
+
+        public static bool CheckValidAmount(int money)
         {
             if (Array.FindIndex(validAmounts, a => a == money) == -1)
             {
-                throw new Exception();
+                throw new ArgumentException("Not a valid amount.");
             }
 
             return true;
         }
-        public void AddToMoneyPool(int money)
-        {
-            if (CheckValidAmount(money))
-            {
-                MoneyPool += money;
-            };
-        }
-
-        public void IncreaseCost(int price)
-        {
-            cost += price;
-        }
+       
 
 
     }

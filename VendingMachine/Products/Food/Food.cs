@@ -12,7 +12,7 @@ namespace VendingMachine.Products.Food
         }
         public override string Use()
         {
-            throw new NotImplementedException();
+            return $"You eat the {Description} {Name} for {Calories} kcal and feel amazing.";
         }
     }
 }
