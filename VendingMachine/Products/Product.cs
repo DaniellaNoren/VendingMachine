@@ -14,7 +14,10 @@ namespace VendingMachine
 
         string description;
         public string Description { get { return description; } set { description = value; } }
-        
+
+        private bool isUnusable;
+
+        public bool IsUnusable { get { return isUnusable; } set { isUnusable = value; } }
         public Product(string name, int price, string description)
         {
             this.Price = price;
@@ -28,5 +31,6 @@ namespace VendingMachine
         }
 
         public abstract string Use();
+
     }
 }

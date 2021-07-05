@@ -36,10 +36,19 @@ namespace VendingMachine
         /// </summary>
         /// <param name="money">Amount of money to buy products with</param>
         /// <param name="products">Products to sell</param>
-        public VendingMachine(int money, ProductStock[] products)
+        public VendingMachine(int money, ProductStock[] products) : this(products)
         {
             this.MoneyPool = money;
             this.products = products;
+        }
+        
+        public VendingMachine(ProductStock[] products)
+        {
+            this.products = products;
+        }
+
+        public VendingMachine()
+        {
         }
 
         /// <summary>

@@ -4,8 +4,9 @@ using System.Text;
 
 namespace VendingMachine.Products
 {
-    public class Drink : Edible
+    public class Drink : Consumable
     {
+
         public Drink(int calories, string name, int price, string description) : base(calories, name, price, description)
         {
 
@@ -13,7 +14,9 @@ namespace VendingMachine.Products
         
         public override string Use()
         {
-            return $"You drink the {Description} {Name} for {Calories} kcal and feel amazing.";
+            base.Use();
+            return  $"You drink the {Description} {Name} for {Calories} kcal and feel amazing.";
+
         }
     }
 }
