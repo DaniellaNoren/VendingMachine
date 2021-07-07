@@ -22,7 +22,7 @@ namespace VendingMachine.Test
         public void AdjustCost_ShouldThrowException()
         {
             VendingMachine vm = new VendingMachine(20, new ProductStock[0]);
-            Assert.Throws<NotEnoughMoneyException>(() => vm.AdjustCost(21));
+            Assert.Throws<NotEnoughMoneyException>(() => vm.AdjustCostAndMoneyPool(21));
         }
 
         [Theory]
@@ -52,9 +52,9 @@ namespace VendingMachine.Test
         public static ProductStock[] GetProducts()
         {
             return new ProductStock[] {
-                new ProductStock(1,new Drink(42, "Coke", 12, "Fizzy")),
-                new ProductStock(1, new Food(100, "Chocolate bar", 12, "Tasty")),
-                new ProductStock(1, new Item("Headphones", 150, "Cool")) };
+                new ProductStock(1,new SodaCan(42, "Coke", 12, "Fizzy")),
+                new ProductStock(1, new Sandwich(100, "Chocolate bar", 12, "Tasty")),
+                new ProductStock(1, new Headphones("Headphones", 150, "Cool")) };
         }
 
         [Fact]
@@ -87,7 +87,7 @@ namespace VendingMachine.Test
         [Fact]
         public void Purchase_ShouldThrowOutOfStockException()
         {
-            VendingMachine vm = new VendingMachine(500, new ProductStock[] { new ProductStock(0, new Drink(5, "Coke", 50, "Description")) });
+            VendingMachine vm = new VendingMachine(500, new ProductStock[] { new ProductStock(0, new SodaCan(5, "Coke", 50, "Description")) });
             
             Assert.Throws<OutOfStockException>(() => vm.Purchase(0));
         }
@@ -95,7 +95,7 @@ namespace VendingMachine.Test
         [Fact]
         public void EndTransaction_ShouldReturnCorrectChange()
         {
-            VendingMachine vm = new VendingMachine(500, new ProductStock[] { new ProductStock(2, new Drink(75, "Coke", 5, "Description")) });
+            VendingMachine vm = new VendingMachine(500, new ProductStock[] { new ProductStock(2, new SodaCan(75, "Coke", 5, "Description")) });
             vm.Purchase(0);
             Dictionary<int, int> change = vm.EndTransaction();
 

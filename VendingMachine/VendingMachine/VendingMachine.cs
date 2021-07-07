@@ -56,13 +56,13 @@ namespace VendingMachine
         /// </summary>
         /// <param name="price">Price to adjust total cost with</param>
         /// <exception cref="NotEnoughMoneyException">If MoneyPool is less than new total cost</exception>
-        public void AdjustCost(int price)
+        public void AdjustCostAndMoneyPool(int price)
         {
             if (MoneyPool - price < 0)
                 throw new NotEnoughMoneyException("Not enough money to buy product.");
 
             TotalCost += price;
-
+            MoneyPool -= price;
         }
 
         /// <summary>
@@ -106,7 +106,7 @@ namespace VendingMachine
                 throw;
             }
 
-            AdjustCost(pr.Price);
+            AdjustCostAndMoneyPool(pr.Price);
 
             return pr;
 
@@ -140,14 +140,12 @@ namespace VendingMachine
         {
             Dictionary<int, int> change = new Dictionary<int, int>();
 
-            int leftOverMoney = MoneyPool - TotalCost;
-
             foreach (int value in validAmounts)
             {
-                if (leftOverMoney % value < leftOverMoney)
+                if (MoneyPool % value < MoneyPool)
                 {
-                    change.Add(value, leftOverMoney / value);
-                    leftOverMoney -= value * (leftOverMoney / value);
+                    change.Add(value, MoneyPool / value);
+                    MoneyPool -= value * (MoneyPool / value);
                 }
             }
 

@@ -13,7 +13,7 @@ namespace VendingMachine.Products
             this.Calories = calories;
         }
 
-        private Consumable(string name, int price, string description) : base(name, price, description)
+        private Consumable(string type, int price, string description) : base(type, price, description)
         {
 
         }
@@ -23,7 +23,7 @@ namespace VendingMachine.Products
             if (IsUnusable)
                 return $"You can't consume this item! It is not safe.";
 
-            return $"You consumed {Description} {Name} for {Calories} kcal. Yummy!";
+            return $"You consumed {Description} {Type} for {Calories} kcal. Yummy!";
         }
     }
 }

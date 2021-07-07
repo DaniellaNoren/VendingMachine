@@ -6,16 +6,16 @@ namespace VendingMachine.Products
 {
     public class ProductStock
     {
-        public int amount;
-        public int Amount
+        public int stock;
+        public int Stock
         {
-            get { return amount; }
+            get { return stock; }
             set
             {
                 if (value < 0)
                     throw new ArgumentException("Amount can't be less than zero.");
 
-                amount = value;
+                stock = value;
             }
         }
 
@@ -23,23 +23,33 @@ namespace VendingMachine.Products
 
         public ProductStock(int amount, Product product)
         {
-            this.Amount = amount;
+            this.Stock = amount;
             this.Product = product;
         }
 
-        public void ChangeAmount(int amount)
+        /// <summary>
+        /// Adds the amount to stock. If the amount causes stock to go negative, stock is zero.
+        /// </summary>
+        /// <param name="amount">Amount to be added/subtracted to stock</param>
+        public void ChangeStock(int amount)
         {
-            if (this.amount + amount < 0)
-                this.amount = 0;
+            if (this.stock + amount < 0)
+                this.stock = 0;
             else
-                this.amount += amount;
+                this.stock += amount;
         }
 
+        /// <summary>
+        /// Returns the product if stock is greater than zero. Otherwise exception is thrown.
+        /// Stock decreases by one if Product is returned.
+        /// </summary>
+        /// <returns>Product</returns>
+        /// <exception cref="OutOfStockException"></exception>
         public Product GetProduct()
         {
-            if (amount > 0)
+            if (stock > 0)
             {
-                ChangeAmount(-1);
+                ChangeStock(-1);
                 return Product;
             }
 

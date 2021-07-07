@@ -10,7 +10,7 @@ namespace VendingMachine
         public int Price { get { return price; } set { price = value; } }
 
         string name;
-        public string Name { get { return name; } set { name = value; } }
+        public string Type { get { return name; } set { name = value; } }
 
         string description;
         public string Description { get { return description; } set { description = value; } }
@@ -18,16 +18,16 @@ namespace VendingMachine
         private bool isUnusable;
 
         public bool IsUnusable { get { return isUnusable; } set { isUnusable = value; } }
-        public Product(string name, int price, string description)
+        public Product(string type, int price, string description)
         {
             this.Price = price;
-            this.Name = name;
+            this.Type = type;
             this.Description = description;
         }
 
         public virtual string Examine()
         {
-            return $"Type: {Name}, Cost: {Price}, Description: {Description}";
+            return $"Type: {Type}, Cost: {Price}, Description: {Description}";
         }
 
         public abstract string Use();

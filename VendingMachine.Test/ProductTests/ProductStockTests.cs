@@ -8,7 +8,7 @@ namespace VendingMachine.Test
 {
     public class ProductStockTests
     {
-        private readonly Product product = new Drink(70, "Coke", 12, "Fizzy drink");
+        private readonly Product product = new SodaCan(70, "Coke", 12, "Fizzy drink");
        
         [Fact]
         public void ProductStock_ShouldThrowArgumentExceptionIfAmountIsNegative()
@@ -25,9 +25,9 @@ namespace VendingMachine.Test
         public void ChangeAmount_ShouldUpdateAmount(int amount, int amountChange, int expected)
         {
             ProductStock ps = new ProductStock(amount, product);
-            ps.ChangeAmount(amountChange);
+            ps.ChangeStock(amountChange);
 
-            Assert.Equal(expected, ps.Amount);
+            Assert.Equal(expected, ps.Stock);
         }
 
         [Fact]
@@ -35,7 +35,7 @@ namespace VendingMachine.Test
         {
             ProductStock ps = new ProductStock(2, product);
             ps.GetProduct();
-            Assert.Equal(1, ps.Amount);
+            Assert.Equal(1, ps.Stock);
         }
 
         [Fact]

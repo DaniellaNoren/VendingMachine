@@ -10,11 +10,14 @@ namespace VendingMachine
     class VendingMachineProgram
     {
         private List<Product> boughtProducts = new List<Product>();
+
         private static VendingMachine vendingMachine = new VendingMachine(new ProductStock[] {
-        new ProductStock(2, new Drink(75, "Coke", 11, "Fizzy")),
-        new ProductStock(1, new Food(101, "Smarties", 15, "Crunchy")),
-        new ProductStock(5, new Item("Stick", 120, "Sticky")),
-        new ProductStock(3, new Drink(0, "Water", 16, "Satisfying")),
+        new ProductStock(2, new SodaCan(75, "Coke", 11, "Fizzy", pant: 2)),
+        new ProductStock(2, new SodaCan(72, "Pepsi", 11, "Tasty", maxSips: 4)),
+        new ProductStock(2, new SodaCan(0, "Water", 15, "Satisfying", isCarbonated: false, pant: 2)),
+        new ProductStock(1, new Sandwich(155, "Avocado Sandwich", 23, "Crunchy")),
+        new ProductStock(5, new Headphones("Apple", 255, "In-ear")),
+        new ProductStock(3, new Sandwich(255, "BLT", 16, "Heavy", hasMayo: true)),
         });
 
 
@@ -22,7 +25,6 @@ namespace VendingMachine
         {
             VendingMachineProgram program = new VendingMachineProgram();
             program.StartProgram();
-            program.EndProgram();
         }
 
         public void StartProgram()
@@ -31,6 +33,9 @@ namespace VendingMachine
 
             do
             {
+                Console.Clear();
+
+                Console.WriteLine($"Total amount of money: {vendingMachine.MoneyPool}\nTotal cost: {vendingMachine.TotalCost}");
                 PrintMainMenu();
 
                 choice = GetNumber();
@@ -39,13 +44,17 @@ namespace VendingMachine
 
             } while (choice != 3);
 
+            EndProgram();
         }
 
         public void EndProgram()
         {
+            Console.Clear();
             Dictionary<int, int> change = vendingMachine.EndTransaction();
             PrintChange(change);
             int choice;
+
+            Console.WriteLine("--------------------------------\nBought products: ");
 
             do
             {
@@ -56,8 +65,6 @@ namespace VendingMachine
                 if (choice == -1)
                     break;
 
-                Console.Clear();
-
                 Product product = ChooseProduct(choice);
 
                 if (product == null)
@@ -66,11 +73,17 @@ namespace VendingMachine
                     continue;
                 }
 
-                PrintProductMenu();
+                PrintProductMenu(product);
 
                 choice = GetNumber();
 
                 ChooseProductMenu(choice, product);
+
+                if (product.IsUnusable)
+                {
+                    boughtProducts.Remove(product);
+                };
+
 
             } while (true);
         }
@@ -108,17 +121,6 @@ namespace VendingMachine
                 default: break;
             }
         }
-
-        public void ChooseProductMenu(int choice, Product product)
-        {
-            switch (choice)
-            {
-                case 1: UseProduct(product); break;
-                case 2: ExamineProduct(product); break;
-                default: break;
-            }
-        }
-
         public void EnterMoney()
         {
 
@@ -138,6 +140,7 @@ namespace VendingMachine
                 {
                     Console.WriteLine("Not a valid amount of money!");
                 }
+
             } while (true);
 
         }
@@ -153,31 +156,71 @@ namespace VendingMachine
 
                 try
                 {
-                    int choice = GetNumber("Enter your choice: (-1 to exit)");
+                    int choice = GetNumber("Enter your choice of product to buy: (-1 to exit)");
 
                     if (choice == -1)
                         return;
 
                     Product product = vendingMachine.Purchase(choice - 1);
                     boughtProducts.Add(product);
-                    Console.WriteLine($"You bought a {product.Name}");
+                    Console.Clear();
+                    Console.WriteLine($"You bought a {product.Type}");
                 }
                 catch (NotEnoughMoneyException)
                 {
+                    Console.Clear();
                     Console.WriteLine("You do not have enough money to buy this product");
+                    
 
                 }
                 catch (OutOfStockException)
                 {
+                    Console.Clear();
                     Console.WriteLine("The product you chose is out of stock.");
                 }
                 catch (IndexOutOfRangeException)
                 {
+                    Console.Clear();
                     Console.WriteLine("Incorrect number. Try again.");
                 }
 
             } while (true);
         }
+
+        public void ChooseProductMenu(int choice, Product product)
+        {
+            switch (choice)
+            {
+                case 1: UseProduct(product); break;
+                case 2: ExamineProduct(product); break;
+                case 3:
+                    {
+
+                        if (product is SodaCan)
+                            RecycleSodaCan(product as SodaCan);
+                        else if (product is Sandwich)
+                        {
+                            Console.WriteLine((product as Sandwich).Smell());
+                        }
+                        else
+                        {
+                            return;
+                        }
+                    } break;
+                case 4:
+                    {
+                        if(!(product is SodaCan || product is Sandwich))
+                            Console.WriteLine("Invalid choice.");
+                        else
+                        {
+                            return;
+                        }
+                    } break;
+                default: Console.WriteLine("Invalid choice"); break;
+            }
+        }
+
+       
 
         public Product ChooseProduct(int choice)
         {
@@ -193,11 +236,13 @@ namespace VendingMachine
         public void UseProduct(Product product)
         {
             Console.WriteLine(product.Use());
+        }
 
-            if (product.IsUnusable)
-            {
-                boughtProducts.Remove(product);
-            };
+        public void RecycleSodaCan(SodaCan sodaCan)
+        {
+            int pant = sodaCan.Recycle();
+
+            Console.WriteLine($"You recycled the can and got {pant} kr");
         }
 
         public void ExamineProduct(Product product)
@@ -211,7 +256,7 @@ namespace VendingMachine
 
             foreach (ProductStock product in products)
             {
-                Console.WriteLine($"{index++}. {product.Product.Examine()}. Amount: {product.Amount}");
+                Console.WriteLine($"{index++}. {product.Product.Examine()}. Amount: {product.Stock}");
             }
         }
         public void PrintProducts(List<Product> products)
@@ -220,12 +265,13 @@ namespace VendingMachine
 
             foreach (Product product in products)
             {
-                Console.WriteLine($"{index++}. {product.Name}.");
+                Console.WriteLine($"{index++}. {product.Type}.");
             }
         }
 
         public void PrintChange(Dictionary<int, int> change)
         {
+
             Console.WriteLine("Returned change: ");
             foreach (KeyValuePair<int, int> value in change)
             {
@@ -239,10 +285,23 @@ namespace VendingMachine
             Console.WriteLine("1. Show products\n2. Insert money\n3. End transaction");
         }
 
-        public void PrintProductMenu()
+        public void PrintProductMenu(Product product)
         {
             ChangeConsoleColor(ConsoleColor.Green);
-            Console.WriteLine("------------------\n1. Use\n2. Examine\n3. Go back");
+            Console.WriteLine("------------------\n1. Use\n2. Examine");
+
+            if(product is SodaCan)
+            {
+                Console.WriteLine("3. Recycle\n4. Go back");
+            }
+            else if(product is Sandwich)
+            {
+                Console.WriteLine("3. Smell\n4. Go back");
+            }
+            else
+            {
+                Console.WriteLine("3. Go back");
+            }
         }
 
         public void ChangeConsoleColor(ConsoleColor color = ConsoleColor.Gray)
